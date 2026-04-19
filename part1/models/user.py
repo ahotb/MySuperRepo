@@ -1,8 +1,8 @@
 
-
+# التحقق من بيانات المستخدم
 def validate_user_data(user_input):
-    if not isinstance(user_input, dict):
-        return user_input
+    if not isinstance(user_input, dict):  # التأكد من ان البيانات جايه بشكل قاموس
+        return {"is_valid": False, "data": None, "errors": ["The data entered must be in dictionary format."]}
     errors = []
 
     for field in ["username", "email", "password"]:
@@ -12,7 +12,7 @@ def validate_user_data(user_input):
             errors.append(f"Missing or empty {field}")
             continue
         if field == 'username' and not (3 <= len(value) <= 20):
-            errors.append(f"{field} is short ")
+            errors.append(f"Username must be between 3 and 20 characters")
             continue
         if field == "email" and ("@" not in value or "." not in value):
             errors.append(f"The {field} address is incorrect ")
@@ -20,4 +20,7 @@ def validate_user_data(user_input):
         if field == "password" and len(value) < 8:
             errors.append(f"The {field} is wrong ")
             continue
-    return errors
+    if not errors:
+        return {"is_valid": True, "data": user_input, "errors": []}
+    else:
+        return {"is_valid": False, "data": None, "errors": errors}
