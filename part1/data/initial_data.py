@@ -8,20 +8,39 @@ conn = sqlite3.connect('hbnb.db')
 cursor = conn.cursor()
 # هنا انشانا اول جدول في القاعده بهذا الطريقه
 # الجدول الاول للمستخدم
-cursor.execute(
-    'CREATE TABLE users(id INTEGER PRIMARY KEY, username TEXT, email TEXT, password TEXT, rule_owner  BOOLEAN DEFAULT 0, rule_admin  BOOLEAN DEFAULT 0)')
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY AUTOINCREMENT,
+			   username TEXT NOT NULL UNIQUE,
+			   email TEXT NOT NULL UNIQUE,
+			   password TEXT NOT NULL,
+			   rule_owner  BOOLEAN DEFAULT 0 NOT NULL,
+			   rule_admin  BOOLEAN DEFAULT 0 NOT NULL)""")
 # الجدول الرابع لوسائل الراحه للاماكن المضافة ل اي مكان يضاف في الموقع
-cursor.execute(
-    'CREATE TABLE amenity(id INTEGER PRIMARY KEY, description TEXT, images TEXT)')
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS amenity(id INTEGER PRIMARY KEY AUTOINCREMENT,
+			   name TEXT NOT NULL UNIQUE,
+				description TEXT NOT NULL,
+			   images TEXT)""")
 # الجدول الثاني للمكان
-cursor.execute(
-    'CREATE TABLE place(id INTEGER PRIMARY KEY, title TEXT, description TEXT, price INTEGER NOT NULL, location INTEGER NOT NULL, Amenity_id INTEGER, user_id INTEGER)')
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS place(id INTEGER PRIMARY KEY AUTOINCREMENT,
+			   title TEXT NOT NULL,
+			   description TEXT NOT NULL,
+			   price REAL NOT NULL CHECK (price > 0),
+			   latitude REAL,
+               longitude REAL,
+			   Amenity_id INTEGER NOT NULL,
+			   user_id INTEGER NOT NULL)""")
 # الجدول الثالث للتقييم
-cursor.execute(
-    'CREATE TABLE review(id INTEGER PRIMARY KEY, comment TEXT, rating INTEGER  NOT NULL CHECK (rating BETWEEN 1 AND 5), place_id INTEGER, user_id INTEGER)')
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS review(id INTEGER PRIMARY KEY AUTOINCREMENT,
+			   comment TEXT NOT NULL,
+			   rating INTEGER  NOT NULL CHECK (rating BETWEEN 1 AND 5),
+			   place_id INTEGER NOT NULL,
+			   user_id INTEGER NOT NULL)""")
 
 # يفضل استخدامها مع الاستعلامات بكافة طرقها
 #  اعطاء تحديث الاوامر وتنفيذها على قاعده البيانات
-# conn.commit()
+conn.commit()
 # بعد الانشاء يتم اغلاق القاعده عشان م يكون في تسيرب للبيانات
 conn.close()
