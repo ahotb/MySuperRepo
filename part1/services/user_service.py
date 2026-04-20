@@ -1,12 +1,17 @@
-from models.user import User  # هنا استدعاء دالة التحقق
+from models.user import User, Owner, Admin  # هنا استدعاء كلاس المستخدم
 # وهنا استدعاء دالتين التحقق من عدم التكرار وتنفيذ الاوامر
 from core.database import execute_query, fetch_one
 import hashlib  # هنا مكتبة التشفير لكلمة المرور
 
 
-def register_user(user_data):
+def register_user(user_data, role="user"):
     #  إنشاء الكائن (يتم استدعاء _validate() تلقائياً داخل __init__)
-    user_obj = User(**user_data)
+    if role == "owner":
+        user_obj = Owner(**user_data)
+    elif role == "admin":
+        user_obj = Admin(**user_data)
+    else:
+        user_obj = User(**user_data)
 
     #  فحص الحالة فوراً عبر واجهة الكلاس
     if not user_obj.is_valid():
@@ -27,11 +32,15 @@ def register_user(user_data):
     )
     if existing is not None:
         return {"is_valid": False, "errors": ["Username or email already exists."]}
+    # إذا كان Owner نجعل rule_owner = 1، والباقي 0
+    rule_owner = 1 if role == "owner" else 0
+    # إذا كان Admin نجعل rule_admin = 1، والباقي 0
+    rule_admin = 1 if role == "admin" else 0
 
-    #  الحفظ الفعلي في القاعدة
-    insert_sql = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)"
-    values_to_insert = (user_dict["username"],
-                        user_dict["email"], user_dict["password"])
+    # 6. الحفظ (إضافة rule_owner و rule_admin للجدول الموجود)
+    insert_sql = "INSERT INTO users (username, email, password, rule_owner, rule_admin) VALUES (?, ?, ?, ?, ?)"
+    values_to_insert = (user_dict["username"], user_dict["email"],
+                        user_dict["password"], rule_owner, rule_admin)
     is_saved = execute_query(insert_sql, values_to_insert)
 
     #  الرد النهائي الموحد
