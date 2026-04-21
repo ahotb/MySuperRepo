@@ -47,3 +47,36 @@ def register_user(user_data, role="user"):
     if is_saved:
         return {"is_valid": True, "message": "User registered successfully."}
     return {"is_valid": False, "errors": ["Failed to save data. Please try again."]}
+
+# تسجيل الدخول
+
+
+def login_user(email, password):
+    data = fetch_one(
+        # التأكد ان المستخدم موجود
+        "SELECT id, username, password, rule_owner, rule_admin FROM users WHERE email = ?", (email,))
+
+    if data is None:
+        return {"is_valid": False, "errors": ["Email or password is incorrect."]}
+
+    # تحديد الفهرس للكلمة المرور لكي تتم المقارنه مع الهاش السابق
+    stored_password = data[2]
+    input_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
+    if stored_password != input_hash:
+        return {"is_valid": False, "errors": ["Email or password is incorrect."]}
+
+    user_id = data[0]
+    username = data[1]
+    rule_owner = data[3]
+    rule_admin = data[4]
+    if rule_admin == 1:
+        role = "admin"
+    elif rule_owner == 1:
+        role = "owner"
+    else:
+        role = "user"
+
+    return {"is_valid": True, "message": "Login successful.", "user": {"id": user_id,
+                                                                       "username": username,
+                                                                       "email": email,
+                                                                       "role": role}}
