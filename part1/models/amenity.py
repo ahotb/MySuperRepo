@@ -1,5 +1,6 @@
 
 class Amenity:
+    # هنا البيانات المتفق عليها في قاعدة البيانات
     def __init__(self, id=None, name=None, description=None, images=None):
         self.id = id
         self.name = name
@@ -8,16 +9,16 @@ class Amenity:
         self.errors = []
         self._validate()
 
-    def _validate(self):
+    def _validate(self):  # هذا الداله تتاكد من الاسم والوصف انهم سليمين ولا يوجد خطأ
         if not self.name or not isinstance(self.name, str) or self.name.strip() == "":
             self.errors.append("Missing or empty name")
         if not self.description or not isinstance(self.description, str) or self.description.strip() == "":
             self.errors.append("Missing or empty description")
 
-    def is_valid(self):
+    def is_valid(self):  # هنا ناخذ قيمه صح ام خطأ
         return len(self.errors) == 0
 
-    def get_errors(self):
+    def get_errors(self):  # هنا نرجع قائمة الاخطأ
         """ترجع قائمة الأخطاء للـ Service عشان يعرضها"""
         return self.errors
 
