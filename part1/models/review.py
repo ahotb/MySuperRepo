@@ -11,7 +11,7 @@ class Review:
         self._validate()
 
     def _validate(self):
-        if not self.comment or isinstance(self.comment, str) or not self.comment.strip() == "":
+        if not self.comment or not isinstance(self.comment, str) or self.comment.strip() == "":
             self.errors.append("Missing or empty comment")
         if not isinstance(self.rating, int) or not (1 <= self.rating <= 5):
             self.errors.append("Rating must be a number between 1 and 5")
