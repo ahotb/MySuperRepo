@@ -38,7 +38,7 @@ def init_schema():
 			   price REAL NOT NULL CHECK (price > 0),
 			   latitude REAL,
                longitude REAL,
-			   Amenity_id INTEGER NOT NULL,
+			   amenity_id INTEGER NOT NULL,
 			   user_id INTEGER NOT NULL)""")
 # الجدول الثالث للتقييم
     cursor.execute("""
