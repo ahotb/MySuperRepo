@@ -17,13 +17,13 @@ class Place:
         if not self.title or not isinstance(self.title, str) or self.title.strip() == "":
             # في حال وجود خطأ تظاف على القائمه حقت الاخطأ
             self.errors.append("Missing or empty title")
-        if not self.description or not isinstance(self.description, str) or self.description.split() == "":
+        if not self.description or not isinstance(self.description, str) or self.description.strip() == "":
             self.errors.append("missing or empty description")
         if not isinstance(self.price, (float, int)) or self.price <= 0:
             self.errors.append("Price must be a number greater than 0")
-        if not self.Latitude or not isinstance(self.Latitude, (float, int)) or not (-90 <= self.latitude <= 90):
+        if not self.latitude or not isinstance(self.latitude, (float, int)) or not (-90 <= self.latitude <= 90):
             self.errors.append("Latitude must be between -90 and 90")
-        if not self.Longitude or not isinstance(self.Longitude, (float, int)) or not (-180 <= self.Longitude <= 180):
+        if not self.longitude or not isinstance(self.longitude, (float, int)) or not (-180 <= self.longitude <= 180):
             self.errors.append("Longitude must be between -180 and 180")
 
         if self.amenity_id is None:
@@ -45,4 +45,4 @@ class Place:
                 "latitude": self.latitude,
                 "longitude": self.longitude,
                 "amenity_id": self.amenity_id,
-                "user_id ": self.user_id}
+                "user_id": self.user_id}
