@@ -1,0 +1,31 @@
+
+
+class Review:
+    def __init__(self, id=None, comment=None, rating=None, place_id=None, user_id=None):
+        self.id = id
+        self.comment = comment
+        self.rating = rating
+        self.place_id = place_id
+        self.user_id = user_id
+        self.errors = []
+        self._validate()
+
+    def _validate(self):
+        if not self.comment or isinstance(self.comment, str) or not self.comment.strip() == "":
+            self.errors.append("Missing or empty comment")
+        if not isinstance(self.rating, int) or not (1 <= self.rating <= 5):
+            self.errors.append("Rating must be a number between 1 and 5")
+
+        if self.place_id is None:
+            self.errors.append("Place ID is required")
+        if self.user_id is None:
+            self.errors.append("User ID is required")
+
+    def is_valid(self):
+        return len(self.errors) == 0
+
+    def get_errors(self):
+        return self.errors
+
+    def to_dict(self):
+        return {"id": self.id, "comment": self.comment, "rating": self.rating, "place_id": self.place_id, "user_id": self.user_id}
