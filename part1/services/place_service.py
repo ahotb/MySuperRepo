@@ -11,11 +11,14 @@ def create_place(place_data):
     place_dict = place_obj.to_dict()
     # البحث عن وجود المالك
     existing_user = fetch_one(
-        "SELECT id FROM users WHERE id=?",
+        "SELECT id, rule_owner FROM users WHERE id=?",
         (place_dict["user_id"],))
     # اذا لم يكون موجود يكون خطأ
     if existing_user is None:
         return {"is_valid": False, "errors": ["Owner not found."]}
+    user_id, rule_owner = existing_user
+    if not rule_owner:  # إذا كانت 0 (False) يعني مستخدم عادي
+        return {"is_valid": False, "errors": ["Only owners can add places."]}
     # البحث عن وسائل الراحه
     existing_amenity = fetch_one(
         "SELECT id FROM amenity WHERE id=?",

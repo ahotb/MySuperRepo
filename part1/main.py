@@ -1,5 +1,5 @@
 from data.initial_data import init_schema
-from services.user_service import register_user, login_user
+from services.user_service import register_user, login_user, get_all_users
 from core.database import fetch_all
 from services.amenity_service import create_amenity
 from services.place_service import create_place
@@ -7,7 +7,7 @@ from services.place_service import create_place
 if __name__ == "__main__":
     init_schema()
 
-
+    # print(get_all_users())
 # تأكد أن user_id و amenity_id موجودين فعلاً في قاعدة بياناتك قبل التجربة
 print(create_place({
     "title": "fali",

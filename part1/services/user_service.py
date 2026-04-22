@@ -1,6 +1,6 @@
 from models.user import User, Owner, Admin  # هنا استدعاء كلاس المستخدم
 # وهنا استدعاء دالتين التحقق من عدم التكرار وتنفيذ الاوامر
-from core.database import execute_query, fetch_one
+from core.database import execute_query, fetch_one, fetch_all
 import hashlib  # هنا مكتبة التشفير لكلمة المرور
 
 
@@ -80,3 +80,40 @@ def login_user(email, password):
                                                                        "username": username,
                                                                        "email": email,
                                                                        "role": role}}
+
+
+def get_all_users():
+    # 1. جلب جميع المستخدمين مع أعمدة الأدوار
+    users_data = fetch_all(
+        "SELECT id, username, email, rule_owner, rule_admin FROM users")
+
+    if not users_data:
+        return {"is_valid": True, "message": "No users found.", "count": 0, "users": []}
+
+    # 2. تحويل كل صف إلى قاموس وتحديد الدور نصياً
+    users_list = []
+    for row in users_data:
+        # row ترتيبه يطابق SELECT: (id, username, email, rule_owner, rule_admin)
+        user_id, username, email, rule_owner, rule_admin = row
+
+        if rule_admin:
+            role = "admin"
+        elif rule_owner:
+            role = "owner"
+        else:
+            role = "user"
+
+        users_list.append({
+            "id": user_id,
+            "username": username,
+            "email": email,
+            "role": role
+        })
+
+    # 3. إرجاع النتيجة الموحدة مع العدد
+    return {
+        "is_valid": True,
+        "message": f"Retrieved {len(users_list)} users successfully.",
+        "count": len(users_list),
+        "users": users_list
+    }
