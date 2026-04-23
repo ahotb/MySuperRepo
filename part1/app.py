@@ -3,7 +3,8 @@ from services.user_service import register_user, login_user
 from core.database import fetch_all
 # استدعاء المكتبه لتشغيل السيرفر
 app = Flask(__name__)
-
+# هنا نجعل الترتيب الذي وضعنه يكون زي ماهو ولا يتغير بترتيب ابجدي
+app.json.sort_keys = False
 # تحديد المسار الي بشتغل عليه
 
 
@@ -56,7 +57,6 @@ def get_places():  # مسار عرض الاماكن
     except Exception as e:
         print(f"Error {e}")
         return jsonify({"error": "Database save failed"}), 500
-
 
     # امر تشغيل السيرفر
 if __name__ == "__main__":
