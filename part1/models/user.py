@@ -64,4 +64,20 @@ class Owner(User):
 
 
 class Admin(User):
-    pass
+    def __init__(self, username=None, email=None, password=None, role="admin", user_id=None):
+        super().__init__(username, email, password, role, user_id)
+
+    def get_role_name(self):
+        return "admin"
+
+    def can_delete_place(self, place_owner_id=None):
+        return True
+
+    def can_delete_user(self):
+        return True
+
+    def can_delete_review(self):
+        return True
+
+    def can_manage_amenity(self):
+        return True
