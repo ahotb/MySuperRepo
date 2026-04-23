@@ -50,7 +50,17 @@ class User:
 
 
 class Owner(User):
-    pass
+    def __init__(self, username=None, email=None, password=None, role="owner", user_id=None):
+        super().__init__(username, email, password, role, user_id)
+
+    def get_role_name(self):
+        return "owner"
+
+    def can_update_place(self, place_owner_id):
+        return self.id == place_owner_id
+
+    def can_delete_place(self, place_owner_id):
+        return self.id == place_owner_id
 
 
 class Admin(User):
