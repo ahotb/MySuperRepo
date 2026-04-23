@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from services.user_service import register_user
+from services.user_service import register_user, login_user
 # استدعاء المكتبه لتشغيل السيرفر
 app = Flask(__name__)
 
@@ -21,6 +21,25 @@ def api_register():
         return jsonify({"error": "Database save failed"}), 500
 
 
-# امر تشغيل السيرفر
+@app.route('/api/login', methods=['POST'])
+def api_login():
+    user_data = request.get_json()
+    # هنا حددنا من القاموس الي نحتاجه وهو الايميل والمغير الثاني نفسه
+    user_email = user_data.get('email')
+    user_pass = user_data.get('password')
+    if not user_email or not user_pass:  # هنا نتاكد بانهم غير فارغين او توجد مسافات
+        return jsonify({"error": "Email or password is required."}), 400
+    try:
+        # هنا استدعاء دالة تسجيل الدخول بعد التحقق
+        success = login_user(user_email, user_pass)
+        if success.get("is_valid"):  # هنا نتاكد بان البيانات صحيحه
+            return jsonify({"user": success["user"]}), 200
+        else:
+            return jsonify({"errors": success.get("errors")}), 401
+    except Exception as e:
+        print(f"Error {e}")
+        return jsonify({"error": "Database save failed"}), 500
+
+    # امر تشغيل السيرفر
 if __name__ == "__main__":
     app.run(debug=True)
