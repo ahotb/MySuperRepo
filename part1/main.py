@@ -1,4 +1,5 @@
 from data.initial_data import init_schema
+from models.user import Owner
 from services.user_service import register_user, login_user, get_all_users
 from core.database import fetch_all
 from services.amenity_service import create_amenity
@@ -6,6 +7,17 @@ from services.place_service import create_place
 from services.review_service import create_review
 if __name__ == "__main__":
     init_schema()
+
+# إنشاء كائن مالك (اختبار منطقي فقط حالياً)
+# owner_obj = Owner(username="Owner1", email="owner@test.com",
+#                   password="123", user_id=1)
+
+# print("🔹 Role Name:", owner_obj.get_role_name())
+# print("🔹 Can update own place?", owner_obj.can_update_place(1))   # متوقع: True
+# print("🔹 Can delete another place?",
+#       owner_obj.can_delete_place(5))  # متوقع: False
+
+print(get_all_users())
 #     print("\n🔹 Test 1: Valid Review (Success):")
 # print(create_review({
 #     "comment": "A wonderful experience, I recommend visiting it!",
