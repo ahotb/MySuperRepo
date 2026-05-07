@@ -1,9 +1,18 @@
 from flask import Flask, jsonify, request
+from flasgger import Swagger
 from services.user_service import register_user, login_user
 from services.place_service import create_place
+from services.review_service import create_review
 from core.database import fetch_all
+
 # استدعاء المكتبه لتشغيل السيرفر
 app = Flask(__name__)
+app.config['SWAGGER'] = {
+    'title': 'Booking API',
+    'uiversion': 3,
+    'description': 'واجهة برمجة تطبيقات لحجز وإدارة الأماكن والتقييمات'
+}
+Swagger(app)
 # هنا نجعل الترتيب الذي وضعنه يكون زي ماهو ولا يتغير بترتيب ابجدي
 app.json.sort_keys = False
 # تحديد المسار الي بشتغل عليه
@@ -65,7 +74,7 @@ def add_place():
     try:
         place_data = request.get_json()
         if not place_data:
-            return jsonify({"nvalid or empty JSON data."}), 400
+            return jsonify({"errors": ["Invalid or empty JSON data."]}), 400
         dine = create_place(place_data)
         if dine.get("is_valid"):  # هنا نتاكد بان البيانات صحيحه
             return jsonify({"message": dine["message"]}), 201
@@ -76,6 +85,22 @@ def add_place():
         return jsonify({"error": "Internal server error."}), 500
 
 
-    # امر تشغيل السيرفر
+@app.route('/api/reviews', methods=["POST"])
+def add_review():
+    try:
+        reviews_data = request.get_json()
+        if not reviews_data:
+            return jsonify({"error": ["nvalid or empty JSON data."]}), 400
+        dine = create_review(reviews_data)
+        if dine.get("is_valid"):  # هنا نتاكد بان البيانات صحيحه
+            return jsonify({"message": dine["message"]}), 201
+        else:
+            return jsonify({"errors": dine.get("errors")}), 400
+    except Exception as e:
+        print(f"Error {e}")
+        return jsonify({"error": "Internal server error."}), 500
+
+
+# امر تشغيل السيرفر
 if __name__ == "__main__":
     app.run(debug=True)
