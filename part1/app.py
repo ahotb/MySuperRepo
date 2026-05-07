@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from services.user_service import register_user, login_user
+from services.place_service import create_place
 from core.database import fetch_all
 # استدعاء المكتبه لتشغيل السيرفر
 app = Flask(__name__)
@@ -57,6 +58,23 @@ def get_places():  # مسار عرض الاماكن
     except Exception as e:
         print(f"Error {e}")
         return jsonify({"error": "Database save failed"}), 500
+
+
+@app.route('/api/places', methods=["POST"])
+def add_place():
+    try:
+        place_data = request.get_json()
+        if not place_data:
+            return jsonify({"nvalid or empty JSON data."}), 400
+        dine = create_place(place_data)
+        if dine.get("is_valid"):  # هنا نتاكد بان البيانات صحيحه
+            return jsonify({"message": dine["message"]}), 201
+        else:
+            return jsonify({"errors": dine.get("errors")}), 401
+    except Exception as e:
+        print(f"Error {e}")
+        return jsonify({"error": "Internal server error."}), 500
+
 
     # امر تشغيل السيرفر
 if __name__ == "__main__":
