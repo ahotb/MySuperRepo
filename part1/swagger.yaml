@@ -1,0 +1,98 @@
+swagger: '2.0'
+info:
+  title: 'Booking API'
+  description: 'واجهة برمجة تطبيقات لحجز وإدارة الأماكن والتقييمات'
+  version: '1.0.0'
+host: '127.0.0.1:5000'
+basePath: '/'
+schemes:
+  - 'http'
+
+paths:
+  /api/register:
+    post:
+      summary: register new user "
+      tags: ['Users']
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              username: { type: string, example: 'ahmed123' }
+              email: { type: string, example: 'ahmed@example.com' }
+              password: { type: string, example: 'SecurePass123' }
+              role:
+                {
+                  type: string,
+                  default: 'user',
+                  enum: ['user', 'owner', 'admin'],
+                }
+      responses:
+        201: { description: 'Registration completed successfully' }
+        400: { description: 'Invalid data or user exists' }
+
+  /api/login:
+    post:
+      summary: 'Login user'
+      tags: ['Users']
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              email: { type: string, example: 'ahmed@example.com' }
+              password: { type: string, example: 'SecurePass123' }
+      responses:
+        200: { description: 'Login completed successfully' }
+        400: { description: 'Email or password is required' }
+        401: { description: 'Invalid login credentials' }
+
+  /api/places:
+    get:
+      summary: 'Display all places'
+      tags: ['Places']
+      responses:
+        200: { description: 'List of places' }
+    post:
+      summary: 'Add new place'
+      tags: ['Places']
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              title: { type: string, example: 'Luxury Villa' }
+              description: { type: string }
+              price: { type: number, example: 1500.0 }
+              latitude: { type: number, example: 24.0 }
+              longitude: { type: number, example: 46.0 }
+              amenity_id: { type: integer, example: 1 }
+              user_id: { type: integer, example: 2 }
+      responses:
+        201: { description: 'Place created successfully' }
+        400: { description: 'Invalid data or user is not the owner' }
+
+  /api/reviews:
+    post:
+      summary: 'Add review for a place'
+      tags: ['Reviews']
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              comment: { type: string, example: 'Excellent experience!' }
+              rating: { type: integer, minimum: 1, maximum: 5, example: 5 }
+              place_id: { type: integer, example: 1 }
+              user_id: { type: integer, example: 1 }
+      responses:
+        201: { description: 'Review added successfully' }
+        400: { description: 'Invalid data or duplicate review' }

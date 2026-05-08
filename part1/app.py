@@ -7,13 +7,8 @@ from core.database import fetch_all
 
 # استدعاء المكتبه لتشغيل السيرفر
 app = Flask(__name__)
-app.config['SWAGGER'] = {
-    'title': 'Booking API',
-    'uiversion': 3,
-    'description': 'واجهة برمجة تطبيقات لحجز وإدارة الأماكن والتقييمات'
-}
-Swagger(app)
 # هنا نجعل الترتيب الذي وضعنه يكون زي ماهو ولا يتغير بترتيب ابجدي
+Swagger(app, template_file='swagger.yaml')
 app.json.sort_keys = False
 # تحديد المسار الي بشتغل عليه
 
