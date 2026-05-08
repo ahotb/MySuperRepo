@@ -36,3 +36,27 @@ def create_place(place_data):
     if is_saved:
         return {"is_valid": True, "message": "place registered successfully."}
     return {"is_valid": False, "errors": ["Failed to save data. Please try again."]}
+
+
+def update_place(place_id, place_data):
+
+    place_obj = Place(**place_data)
+    if not place_obj.is_valid():
+        return {"is_valid": False, "errors": place_obj.get_errors()}
+
+    place_dict = place_obj.to_dict()
+    ownership_check = fetch_one(
+        "SELECT id FROM place WHERE id=? AND user_id=?",
+        (place_id, place_dict["user_id"]))
+
+    if ownership_check is None:
+        return {"is_valid": False, "errors": ["Unauthorized: Place not found or you don't own it."]}
+
+    update_sql = "UPDATE place SET title=?, description=?, price=?, latitude=?, longitude=? WHERE id=?"
+    values = (place_dict["title"], place_dict["description"], place_dict["price"], place_dict["latitude"],
+              place_dict["longitude"], place_id)
+    is_updated = execute_query(update_sql, values)
+
+    if is_updated:
+        return {"is_valid": True, "message": "place updated successfully."}
+    return {"is_valid": False, "errors": ["Failed to save data. Please try again."]}
